@@ -25,7 +25,7 @@ router.post('person.create', '/', async (ctx) => {
   }
   catch (error) {
     ctx.body = error;
-    ctx.status = 400;
+    ctx.status = 500;
   }
 })
 
