@@ -3,6 +3,7 @@ import KoaLogger from "koa-logger";
 import { koaBody } from "koa-body";
 import router from './routes.js';
 import dotenv from 'dotenv';
+import cors from '@koa/cors';
 
 dotenv.config();
 
@@ -19,6 +20,10 @@ db.on('open', () => console.log('Connection Made!'));
 
 
 const app = new koa();
+
+app.use(cors({
+  origin: '*'
+}));
 
 app.use(KoaLogger());
 app.use(koaBody());
