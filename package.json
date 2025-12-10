@@ -1,0 +1,23 @@
+{
+  "name": "MarriagePageBack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "repository": "https://github.com/MystEduProjects/MarriagePageBack.git",
+  "author": "Eduardo <esep@uc.cl>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "koa": "^3.1.1",
+    "koa-body": "^7.0.0",
+    "koa-logger": "^4.0.0",
+    "koa-router": "^14.0.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.1",
+    "nodemon": "^3.1.11"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  }
+}
