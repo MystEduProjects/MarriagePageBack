@@ -25,6 +25,7 @@ router.post('gift.create', '/', async (ctx) => {
     }
   }
   catch (error) {
+    console.log(error);
     ctx.body = error;
     ctx.status = 500;
   }
