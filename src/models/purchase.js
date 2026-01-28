@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const objectSchema = new Schema({
-  gift: { type: mongoose.Schema.Types.ObjectId, ref: 'Gift' },
-  quantity: Number
+  gift: { type: mongoose.Schema.Types.ObjectId, ref: 'Gift' }
 });
 
 const purchaseSchema = new Schema({
