@@ -4,22 +4,26 @@ import { koaBody } from "koa-body";
 import router from './routes.js';
 import dotenv from 'dotenv';
 import cors from '@koa/cors';
+import serverless from 'serverless-http';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
-import mongoose from 'mongoose';
-
-const db = mongoose.connection;
-const host = process.env.HOST;
-mongoose.connect(host);
-
-db.on('error', (err) => console.log('Error, DB Not connected'));
-db.on('connected', () => console.log('Connected to mongo'));
-db.on('disconnected', () => console.log('Mongo is disconnected'));
-db.on('open', () => console.log('Connection Made!'));
-
-
 const app = new koa();
+
+const host = process.env.HOST;
+let isConnected = false;
+
+async function connectToDB() {
+  if (isConnected) return;
+  try {
+    const db = await mongoose.connect(host);
+    isConnected = db.connections[0].readyState;
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.error('Error connecting to DB:', err);
+  }
+}
 
 app.use(cors({
   origin: '*'
@@ -28,13 +32,18 @@ app.use(cors({
 app.use(KoaLogger());
 app.use(koaBody());
 
+// Middleware para asegurar conexión a DB en cada request
+app.use(async (ctx, next) => {
+  await connectToDB();
+  await next();
+});
+
 app.use(router.routes());
+app.use(router.allowedMethods());
 
-app.use((ctx) => {
-  ctx.body = "Hello world"
-})
+// Exportar para Vercel
+const handler = serverless(app);
 
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log("Listening on port", port);
-})
+export default async (req, res) => {
+  return await handler(req, res);
+};
