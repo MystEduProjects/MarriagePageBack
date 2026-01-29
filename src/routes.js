@@ -1,14 +1,19 @@
-import Router from "koa-router";
-import people from './routes/people.js';
-import gifts from './routes/gifts.js';
-import purchases from './routes/purchases.js';
-import transaction from './routes/transaction.js';
+import { Router } from 'express';
+import peopleRoutes from './routes/people.js';
+import giftsRoutes from './routes/gifts.js';
+import purchasesRoutes from './routes/purchases.js';
+import transactionRoutes from './routes/transaction.js';
 
-const router = new Router();
 
-router.use('/people', people.routes());
-router.use('/gifts', gifts.routes());
-router.use('/purchases', purchases.routes());
-router.use('/transaction', transaction.routes());
+const router = Router();
+
+router.get('/', (req, res) => {
+  res.json({ message: "Wedding API (Express) is alive" });
+});
+
+router.use('/people', peopleRoutes);
+router.use('/gifts', giftsRoutes);
+router.use('/purchases', purchasesRoutes);
+router.use('/transaction', transactionRoutes);
 
 export default router;

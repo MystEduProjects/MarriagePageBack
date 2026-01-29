@@ -1,32 +1,26 @@
-import Router from 'koa-router';
+import { Router } from 'express';
 import Person from '../models/person.js';
 
 const router = new Router();
 
 
-router.get('people.all', '/', async (ctx) => {
-  const people = await Person.find({});
-  ctx.body = people;
-})
-
-router.post('person.create', '/', async (ctx) => {
+router.get('/', async (req, res) => {
   try {
-    const body = ctx.request.body;
-    const person = new Person(body);
-    const newPerson = await person.save();
-    if (newPerson) {
-      ctx.body = newPerson;
-      ctx.status = 201;
-    }
-    else {
-      ctx.body = 'Not created:', newPerson;
-      ctx.status = 400;
-    }
+    const people = await Person.find({});
+    res.status(200).json(people); // En Express es .json() o .send()
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  catch (error) {
-    ctx.body = error;
-    ctx.status = 500;
+});
+
+router.post('/', async (req, res) => {
+  try {
+    const newPerson = new Person(req.body); // req.body directo gracias a express.json()
+    await newPerson.save();
+    res.status(201).json(newPerson);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-})
+});
 
 export default router;

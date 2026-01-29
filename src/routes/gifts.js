@@ -1,34 +1,33 @@
-import Router from 'koa-router';
+import { Router } from 'express';
 import Gift from '../models/gift.js';
 
 const router = new Router();
 
 
-router.get('gifts.all', '/', async (ctx) => {
-  const gifts = await Gift.find({});
-  ctx.body = gifts;
-  ctx.status = 200;
-})
-
-router.post('gift.create', '/', async (ctx) => {
+router.get('/', async (req, res) => {
   try {
-    const body = ctx.request.body;
-    const gift = new Gift(body);
+    const gifts = await Gift.find({});
+    res.status(200).json(gifts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST create gift
+router.post('/', async (req, res) => {
+  try {
+    const gift = new Gift(req.body);
     const newGift = await gift.save();
+    
     if (newGift) {
-      ctx.body = newGift;
-      ctx.status = 201;
+      res.status(201).json(newGift);
+    } else {
+      res.status(400).json({ message: 'Not created' });
     }
-    else {
-      ctx.body = 'Not created:', newGift;
-      ctx.status = 400;
-    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
-  catch (error) {
-    console.log(error);
-    ctx.body = error;
-    ctx.status = 500;
-  }
-})
+});
 
 export default router;

@@ -1,40 +1,48 @@
-import koa from 'koa';
-import KoaLogger from "koa-logger";
-import { koaBody } from "koa-body";
-import router from './routes.js';
+import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
-import cors from '@koa/cors';
+import mongoose from 'mongoose';
+import router from './routes.js';
 
 dotenv.config();
 
-import mongoose from 'mongoose';
-
-const db = mongoose.connection;
+const app = express();
 const host = process.env.HOST;
-mongoose.connect(host);
 
-db.on('error', (err) => console.log('Error, DB Not connected'));
-db.on('connected', () => console.log('Connected to mongo'));
-db.on('disconnected', () => console.log('Mongo is disconnected'));
-db.on('open', () => console.log('Connection Made!'));
+// Conexión a DB optimizada
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    const db = await mongoose.connect(host);
+    isConnected = db.connections[0].readyState;
+    console.log(">>> MongoDB Conectado");
+  } catch (err) {
+    console.error(">>> Error Mongo:", err);
+  }
+};
 
+// Middlewares
+app.use(cors());
+app.use(express.json()); // Reemplaza a koa-body para JSON
 
-const app = new koa();
+// Middleware para conectar a DB en cada request (Serverless friendly)
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
-app.use(cors({
-  origin: '*'
-}));
+// Rutas
+app.use('/', router);
 
-app.use(KoaLogger());
-app.use(koaBody());
+// IMPORTANTE PARA LOCAL:
+// Solo levanta el puerto si no estás en Vercel
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor Express en http://localhost:${PORT}`);
+  });
+}
 
-app.use(router.routes());
-
-app.use((ctx) => {
-  ctx.body = "Hello world"
-})
-
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log("Listening on port", port);
-})
+// Exportar la app para que Vercel la use como Serverless Function
+export default app;

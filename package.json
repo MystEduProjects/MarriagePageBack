@@ -7,14 +7,11 @@
   "author": "Eduardo <esep@uc.cl>",
   "license": "MIT",
   "dependencies": {
-    "@koa/cors": "^5.0.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
-    "koa": "^3.1.1",
-    "koa-body": "^7.0.0",
-    "koa-logger": "^4.0.0",
-    "koa-router": "^14.0.0",
+    "express": "^5.2.1",
     "mongodb": "^7.0.0",
-    "mongoose": "^9.0.1",
+    "mongoose": "^9.1.5",
     "nodemon": "^3.1.11",
     "transbank-sdk": "^6.1.1",
     "uuid": "^13.0.0"

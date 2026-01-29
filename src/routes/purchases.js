@@ -1,33 +1,34 @@
-import Router from 'koa-router';
+import { Router } from 'express';
 import Purchase from '../models/purchase.js';
 
-const router = new Router();
+const router = Router();
 
-
-router.get('purchases.all', '/', async (ctx) => {
-  const purchases = await Purchase.find({});
-  ctx.body = purchases;
-  ctx.status = 200;
-})
-
-router.post('purchase.create', '/', async (ctx) => {
+// GET all purchases
+router.get('/', async (req, res) => {
   try {
-    const body = ctx.request.body;
-    const purchase = new Purchase(body);
+    const purchases = await Purchase.find({});
+    res.status(200).json(purchases);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST create purchase
+router.post('/', async (req, res) => {
+  try {
+    // En Express usamos req.body directamente
+    const purchase = new Purchase(req.body);
     const newPurchase = await purchase.save();
+    
     if (newPurchase) {
-      ctx.body = newPurchase;
-      ctx.status = 201;
+      res.status(201).json(newPurchase);
+    } else {
+      // Es mejor enviar un objeto JSON incluso en errores
+      res.status(400).json({ message: 'Purchase not created' });
     }
-    else {
-      ctx.body = 'Not created:', newPurchase;
-      ctx.status = 400;
-    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  catch (error) {
-    ctx.body = error;
-    ctx.status = 500;
-  }
-})
+});
 
 export default router;
