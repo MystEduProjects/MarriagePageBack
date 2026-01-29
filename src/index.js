@@ -24,7 +24,7 @@ const connectDB = async () => {
 
 // Middlewares
 app.use(cors());
-app.use(express.json()); // Reemplaza a koa-body para JSON
+app.use(express.json());
 
 // Middleware para conectar a DB en cada request (Serverless friendly)
 app.use(async (req, res, next) => {
@@ -44,5 +44,4 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   });
 }
 
-// Exportar la app para que Vercel la use como Serverless Function
 export default app;
