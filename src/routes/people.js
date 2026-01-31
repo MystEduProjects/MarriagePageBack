@@ -23,4 +23,22 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params; // Sacamos el ID de la URL
+    const updateData = req.body; // Los datos que vienen del front (attend, menu, etc.)
+
+    // { new: true } sirve para que nos devuelva el objeto ya actualizado
+    const updatedPerson = await Person.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedPerson) {
+      return res.status(404).json({ error: "Persona no encontrada" });
+    }
+
+    res.status(200).json(updatedPerson);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
