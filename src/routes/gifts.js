@@ -13,6 +13,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET all labels
+router.get('/labels', async (req, res) => {
+  try {
+    // Obtiene todos los strings únicos dentro de los arreglos "labels"
+    const labels = await Gift.distinct('labels');
+    res.status(200).json(labels);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // POST create gift
 router.post('/', async (req, res) => {
   try {
