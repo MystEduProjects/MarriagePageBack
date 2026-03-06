@@ -6,6 +6,7 @@ const personSchema = new Schema({
   name: String,
   attend: Boolean,
   availableEscort: Boolean,
+  wantsEscort: Boolean,
   escort: String,
   menu: String,
   allergies: String
