@@ -41,4 +41,22 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params; // Sacamos el ID de la URL
+    const updateData = req.body; // Los datos que vienen del front
+
+    // { new: true } sirve para que nos devuelva el objeto ya actualizado
+    const updatedGift = await Gift.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedGift) {
+      return res.status(404).json({ error: "Regalo no encontrado" });
+    }
+
+    res.status(200).json(updatedGift);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
